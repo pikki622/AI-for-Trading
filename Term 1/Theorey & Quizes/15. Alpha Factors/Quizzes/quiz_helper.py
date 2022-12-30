@@ -44,12 +44,11 @@ class Sector(Classifier):
 def build_pipeline_engine(bundle_data, trading_calendar):
     pricing_loader = PricingLoader(bundle_data)
 
-    engine = SimplePipelineEngine(
+    return SimplePipelineEngine(
         get_loader=pricing_loader.get_loader,
         calendar=trading_calendar.all_sessions,
-        asset_finder=bundle_data.asset_finder)
-
-    return engine
+        asset_finder=bundle_data.asset_finder,
+    )
 
 
 def get_factor_exposures(factor_betas, weights):
@@ -82,7 +81,7 @@ def make_factor_plot(df, data_portal, trading_calendar, start_date, end_date):
         end_date,
         'close'
     )
-    
+
     factor_names = df.columns
     factor_data = {}
 
@@ -96,11 +95,11 @@ def make_factor_plot(df, data_portal, trading_calendar, start_date, end_date):
         )
     end_time = time.clock()
     print("Time to get arrange factor data: %.2f secs" % (end_time - start_time))
-    
+
     ls_factor_returns = []
 
     start_time = time.clock()
-    for i, factor in enumerate(factor_names):
+    for factor in factor_names:
         ls = al.performance.factor_returns(factor_data[factor])
         ls.columns = [factor]
         ls_factor_returns.append(ls)
